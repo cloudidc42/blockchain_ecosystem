@@ -1,0 +1,427 @@
+# ==============================================================================
+# Blockchain Explorer - Git Ignore
+# ==============================================================================
+
+# ==============================================================================
+# Environment & Secrets
+# ==============================================================================
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+*.pem
+*.key
+*.crt
+secrets/
+.secrets
+
+# ==============================================================================
+# Python
+# ==============================================================================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+venv.bak/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# ==============================================================================
+# Node.js / JavaScript / TypeScript
+# ==============================================================================
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Testing
+coverage/
+
+# Next.js
+.next/
+out/
+build/
+.vercel
+
+# Production
+dist/
+build/
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Turbo
+.turbo
+
+# ==============================================================================
+# Databases
+# ==============================================================================
+# PostgreSQL
+*.sql.bak
+*.backup
+
+# ClickHouse
+clickhouse/
+
+# SQLite (if used for testing)
+*.db
+*.sqlite
+*.sqlite3
+
+# Redis dumps
+dump.rdb
+appendonly.aof
+
+# ==============================================================================
+# Docker
+# ==============================================================================
+# Ignore docker volumes data (but keep volume definitions in docker-compose)
+volumes/
+*.log
+
+# Docker build artifacts
+docker-compose.override.yml
+
+# ==============================================================================
+# Logs
+# ==============================================================================
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# OS logs
+*.log.*
+*.log.gz
+
+# Application logs
+app.log
+error.log
+access.log
+combined.log
+
+# ==============================================================================
+# Foundry / Solidity
+# ==============================================================================
+# Cache
+cache/
+out/
+
+# Ignores development broadcast logs
+!/broadcast
+/broadcast/*/31337/
+/broadcast/**/dry-run/
+
+# Docs
+docs/
+
+# Dotenv file
+.env
+
+# ==============================================================================
+# Backups
+# ==============================================================================
+backups/
+*.bak
+*.backup
+*.old
+*.orig
+*.tmp
+
+# Database backups
+db_backup/
+*.dump
+*.sql.gz
+
+# ==============================================================================
+# Temporary files
+# ==============================================================================
+tmp/
+temp/
+*.tmp
+*.temp
+.temp/
+
+# ==============================================================================
+# OS Generated
+# ==============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ==============================================================================
+# IDE / Editors
+# ==============================================================================
+# VSCode
+.vscode/
+.history/
+*.code-workspace
+
+# JetBrains (PyCharm, WebStorm, IntelliJ, etc.)
+.idea/
+*.iml
+*.ipr
+*.iws
+.idea_modules/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+.*.sw[a-z]
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# ==============================================================================
+# Build artifacts
+# ==============================================================================
+*.o
+*.a
+*.exe
+*.dll
+*.so
+*.dylib
+
+# ==============================================================================
+# Test artifacts
+# ==============================================================================
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+.hypothesis/
+
+# Jest
+jest-cache/
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
+# ==============================================================================
+# Monitoring & Metrics
+# ==============================================================================
+# Prometheus data
+prometheus-data/
+
+# Grafana data
+grafana-data/
+
+# ==============================================================================
+# Documentation
+# ==============================================================================
+# Ignore generated documentation
+site/
+_site/
+.jekyll-cache/
+
+# But keep our docs
+!docs/
+!docs/**/*.md
+
+# ==============================================================================
+# Archives
+# ==============================================================================
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+
+# ==============================================================================
+# Data files (large datasets)
+# ==============================================================================
+*.csv
+*.parquet
+*.json.gz
+data/
+datasets/
+
+# But keep example/sample files
+!examples/**/*.csv
+!samples/**/*.json
+
+# ==============================================================================
+# Certificates & Keys (NEVER commit these!)
+# ==============================================================================
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+id_rsa
+id_rsa.pub
+
+# ==============================================================================
+# Cloud & Infrastructure
+# ==============================================================================
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Kubernetes secrets
+*-secret.yaml
+secrets.yaml
+
+# Helm
+charts/*/charts/
+*.tgz
+
+# ==============================================================================
+# Performance & Profiling
+# ==============================================================================
+*.prof
+*.mem
+*.cpu
+profile_*.txt
+
+# ==============================================================================
+# Misc
+# ==============================================================================
+# Thumbnails
+._*
+
+# Files that might appear on external disks
+.Spotlight-V100
+.Trashes
+
+# Linux trash folder
+.Trash-*
+
+# Windows shortcuts
+*.lnk
+
+# ==============================================================================
+# Project Specific
+# ==============================================================================
+# Local development overrides
+docker-compose.local.yml
+docker-compose.dev.yml
+
+# Scripts output
+scripts/output/
+
+# Test data (but keep test fixtures)
+test_data/
+!tests/fixtures/
+
+# Migration rollback files
+migrations/rollback/
+
+# Local configuration overrides
+config.local.yaml
+config.local.json
+
+# ==============================================================================
+# Keep these files
+# ==============================================================================
+# Keep .gitkeep files
+!.gitkeep
+
+# Keep example configs
+!.env.example
+!config.example.yaml
+
+# Keep README files
+!README.md
+!README.*.md
+
+# Keep documentation
+!docs/**
+!*.md
