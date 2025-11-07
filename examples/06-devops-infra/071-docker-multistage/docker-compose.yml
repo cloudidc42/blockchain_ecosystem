@@ -1,0 +1,170 @@
+version: '3.8'
+
+services:
+  # ClickHouse Database for Analytics
+  clickhouse:
+    image: clickhouse/clickhouse-server:23.12
+    container_name: blockchain_clickhouse
+    ports:
+      - "8123:8123"  # HTTP interface
+      - "9000:9000"  # Native interface
+    environment:
+      CLICKHOUSE_DB: blockchain_analytics
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-default}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-}
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - ../../05-data-analytics/061-daily-stats/clickhouse/init:/docker-entrypoint-initdb.d
+    networks:
+      - blockchain_net
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Backend API (FastAPI)
+  backend:
+    build:
+      context: ../../03-backend-api/031-block-api
+      dockerfile: ../../06-devops-infra/071-docker-multistage/backend/Dockerfile
+    container_name: blockchain_backend
+    ports:
+      - "8000:8000"
+    environment:
+      RPC_URL: ${RPC_URL:-http://host.docker.internal:8545}
+      CORS_ORIGINS: http://localhost:3000,http://localhost:8000
+      DEBUG: ${DEBUG:-false}
+    networks:
+      - blockchain_net
+    depends_on:
+      - clickhouse
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # Analytics API
+  analytics:
+    build:
+      context: ../../05-data-analytics/061-daily-stats
+      dockerfile: ../../06-devops-infra/071-docker-multistage/analytics/Dockerfile
+    container_name: blockchain_analytics
+    ports:
+      - "8001:8001"
+    environment:
+      CLICKHOUSE_HOST: clickhouse
+      CLICKHOUSE_PORT: 9000
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-default}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-}
+      CLICKHOUSE_DATABASE: blockchain_analytics
+    networks:
+      - blockchain_net
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8001/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # ETL Service (runs periodically via cron or manual)
+  etl:
+    build:
+      context: ../../05-data-analytics/061-daily-stats
+      dockerfile: ../../06-devops-infra/071-docker-multistage/analytics/Dockerfile
+    container_name: blockchain_etl
+    environment:
+      RPC_URL: ${RPC_URL:-http://host.docker.internal:8545}
+      CLICKHOUSE_HOST: clickhouse
+      CLICKHOUSE_PORT: 9000
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER:-default}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD:-}
+      CLICKHOUSE_DATABASE: blockchain_analytics
+    networks:
+      - blockchain_net
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    command: ["python", "etl/blockchain_etl.py", "today"]
+    restart: "no"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    profiles:
+      - etl  # Only run when explicitly called
+
+  # Frontend (Next.js)
+  frontend:
+    build:
+      context: ../../04-frontend-ui/046-block-list
+      dockerfile: ../../06-devops-infra/071-docker-multistage/frontend/Dockerfile
+    container_name: blockchain_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NODE_ENV: production
+    networks:
+      - blockchain_net
+    depends_on:
+      - backend
+      - analytics
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # Nginx Reverse Proxy (optional)
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: blockchain_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    networks:
+      - blockchain_net
+    depends_on:
+      - frontend
+      - backend
+      - analytics
+    restart: unless-stopped
+    profiles:
+      - proxy  # Only run when explicitly called
+
+  # Tabix - ClickHouse Web UI (optional)
+  tabix:
+    image: spoonest/clickhouse-tabix-web-client:latest
+    container_name: blockchain_tabix
+    ports:
+      - "8080:80"
+    networks:
+      - blockchain_net
+    depends_on:
+      - clickhouse
+    restart: unless-stopped
+    profiles:
+      - ui  # Only run when explicitly called
+
+volumes:
+  clickhouse_data:
+    driver: local
+
+networks:
+  blockchain_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
