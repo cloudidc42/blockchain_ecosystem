@@ -1,1 +1,5 @@
-# Python dependencies
+# Web3.py - Ethereum Python library
+web3>=6.11.0
+
+# Environment variables
+python-dotenv>=1.0.0
