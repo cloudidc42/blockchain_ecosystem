@@ -1,0 +1,10 @@
+{
+  "name": "027-multichain",
+  "version": "1.0.0",
+  "description": "Multi-chain Support",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "dependencies": {}
+}

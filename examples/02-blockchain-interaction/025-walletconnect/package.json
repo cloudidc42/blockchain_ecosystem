@@ -1,0 +1,10 @@
+{
+  "name": "025-walletconnect",
+  "version": "1.0.0",
+  "description": "Wallet Connect Integration",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "dependencies": {}
+}

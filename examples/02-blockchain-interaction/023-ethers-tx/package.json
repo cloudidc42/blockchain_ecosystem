@@ -1,0 +1,10 @@
+{
+  "name": "023-ethers-tx",
+  "version": "1.0.0",
+  "description": "Ethers.js Transaction Builder",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "dependencies": {}
+}
