@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:23.12
+    container_name: blockchain_analytics_clickhouse
+    ports:
+      - "8123:8123"  # HTTP interface
+      - "9000:9000"  # Native interface
+    environment:
+      CLICKHOUSE_DB: blockchain_analytics
+      CLICKHOUSE_USER: analytics_user
+      CLICKHOUSE_PASSWORD: analytics_pass
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - ./clickhouse/init:/docker-entrypoint-initdb.d
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    networks:
+      - blockchain_net
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "localhost:8123/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Optional: Tabix - Web UI for ClickHouse
+  tabix:
+    image: spoonest/clickhouse-tabix-web-client:latest
+    container_name: blockchain_analytics_tabix
+    ports:
+      - "8080:80"
+    depends_on:
+      - clickhouse
+    networks:
+      - blockchain_net
+
+volumes:
+  clickhouse_data:
+    driver: local
+
+networks:
+  blockchain_net:
+    driver: bridge

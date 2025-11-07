@@ -1,0 +1,15 @@
+# Core dependencies
+web3>=6.11.0
+clickhouse-driver>=0.2.6
+
+# API Framework
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+pydantic>=2.5.0
+
+# Utilities
+python-dotenv>=1.0.0
+
+# Optional: for advanced analytics
+# pandas>=2.1.0
+# numpy>=1.26.0
