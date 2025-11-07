@@ -1,1 +1,8 @@
-# Python dependencies
+# Web3.py - Ethereum Python library
+web3>=6.11.0
+
+# Eth Account - for signing transactions
+eth-account>=0.10.0
+
+# Environment variables
+python-dotenv>=1.0.0
